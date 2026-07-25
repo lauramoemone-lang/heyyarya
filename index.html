@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alight Motion API · Real API Full Backend</title>
+    <title>Alight Motion · API Auth</title>
+    <!-- Font & Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -13,35 +15,88 @@
         }
 
         body {
-            background: linear-gradient(145deg, #0b0d10 0%, #14181c 100%);
+            background: radial-gradient(ellipse at 50% 20%, #1e0b2b 0%, #0c0712 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 24px;
+            padding: 20px;
+            position: relative;
         }
 
-        .api-card {
-            max-width: 1280px;
+        /* efek glow ungu (background lighting) */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -30%;
+            left: -10%;
+            width: 70%;
+            height: 70%;
+            background: radial-gradient(circle, rgba(160, 60, 255, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -20%;
+            right: -10%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(180, 40, 255, 0.10) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glass-card {
+            max-width: 1000px;
             width: 100%;
-            background: rgba(22, 28, 34, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(20, 12, 30, 0.7);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
             border-radius: 48px;
-            padding: 40px 48px;
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            padding: 36px 40px;
+            border: 1px solid rgba(180, 80, 255, 0.25);
+            box-shadow: 0 30px 70px rgba(80, 0, 180, 0.4), 0 0 0 1px rgba(200, 100, 255, 0.1);
+            position: relative;
+            z-index: 2;
             transition: all 0.2s ease;
         }
 
-        .header {
+        /* cf badge */
+        .cf-badge {
+            position: absolute;
+            top: -14px;
+            right: 30px;
+            background: #1c1326;
+            padding: 6px 18px;
+            border-radius: 60px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #c9a0f0;
+            border: 1px solid #6a3d8a;
+            box-shadow: 0 0 20px #9f5fdf40;
+            letter-spacing: 0.3px;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .cf-badge i {
+            color: #b87ae8;
+            font-size: 14px;
+        }
+
+        .header-auth {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 24px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(200, 100, 255, 0.1);
+            padding-bottom: 18px;
         }
 
         .logo-area {
@@ -51,7 +106,7 @@
         }
 
         .logo-icon {
-            background: linear-gradient(135deg, #ff6b6b, #ff2d55);
+            background: linear-gradient(135deg, #b45cff, #8020d0);
             width: 48px;
             height: 48px;
             border-radius: 16px;
@@ -61,243 +116,164 @@
             font-weight: 700;
             font-size: 22px;
             color: white;
-            box-shadow: 0 8px 20px rgba(255, 45, 85, 0.3);
+            box-shadow: 0 8px 24px rgba(160, 60, 255, 0.4);
         }
 
         .logo-text h1 {
-            color: white;
+            color: #f0e6ff;
             font-size: 26px;
             font-weight: 600;
             letter-spacing: -0.3px;
         }
 
         .logo-text span {
-            color: #8e9aaf;
-            font-size: 14px;
+            color: #b594d0;
+            font-size: 13px;
             font-weight: 400;
             display: block;
             margin-top: 2px;
-            letter-spacing: 0.2px;
         }
 
-        .status-badge {
-            background: rgba(52, 211, 153, 0.15);
-            border: 1px solid rgba(52, 211, 153, 0.2);
-            padding: 10px 20px;
+        .login-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-outline-glow {
+            background: rgba(120, 50, 200, 0.15);
+            border: 1px solid #7a46b0;
+            padding: 8px 20px;
             border-radius: 60px;
-            color: #6ee7b7;
-            font-size: 14px;
+            color: #d9b8ff;
             font-weight: 500;
+            font-size: 14px;
+            backdrop-filter: blur(4px);
+            transition: 0.2s;
+            cursor: default;
             display: flex;
             align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(4px);
+            gap: 8px;
         }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            background: #34d399;
-            border-radius: 50%;
-            display: inline-block;
-            animation: pulse 1.8s infinite;
-            box-shadow: 0 0 12px #34d39966;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 0.6; transform: scale(0.95); }
-            50% { opacity: 1; transform: scale(1.2); }
-            100% { opacity: 0.6; transform: scale(0.95); }
+        .btn-outline-glow i {
+            color: #b07ce0;
         }
 
         .grid-2col {
             display: grid;
             grid-template-columns: 1.2fr 0.8fr;
-            gap: 40px;
-            margin-top: 8px;
+            gap: 36px;
+            margin-top: 10px;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 820px) {
             .grid-2col {
                 grid-template-columns: 1fr;
-                gap: 32px;
+                gap: 28px;
             }
-            .api-card {
-                padding: 28px 20px;
+            .glass-card {
+                padding: 24px 18px;
+            }
+            .cf-badge {
+                right: 16px;
+                top: -12px;
+                font-size: 10px;
+                padding: 4px 12px;
             }
         }
 
-        .endpoint-section h2 {
-            color: #eef2f6;
-            font-size: 20px;
+        /* LOGIN SECTION (kiri) */
+        .login-section h2 {
+            color: #f2e6ff;
+            font-size: 22px;
             font-weight: 600;
-            margin-bottom: 24px;
-            letter-spacing: -0.2px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            margin-bottom: 8px;
         }
 
-        .endpoint-section h2 small {
+        .login-section .sub {
+            color: #b69ed0;
             font-size: 14px;
-            font-weight: 400;
-            color: #7d8b9f;
-            background: rgba(255, 255, 255, 0.04);
-            padding: 4px 14px;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-bottom: 28px;
         }
 
-        .endpoint-list {
+        .social-login-grid {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 16px;
+            margin-bottom: 32px;
         }
 
-        .endpoint-item {
-            background: rgba(12, 16, 20, 0.6);
-            border-radius: 24px;
-            padding: 18px 22px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+        .social-btn {
+            background: rgba(30, 18, 44, 0.7);
+            border: 1px solid #4b2d6b;
+            padding: 16px 20px;
+            border-radius: 60px;
+            color: #ede0ff;
+            font-weight: 500;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
             transition: 0.2s;
-            backdrop-filter: blur(2px);
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        .endpoint-item:hover {
-            border-color: rgba(255, 255, 255, 0.08);
-            background: rgba(20, 26, 32, 0.7);
-            transform: translateY(-2px);
+        .social-btn i {
+            font-size: 22px;
+            width: 30px;
+            text-align: center;
         }
 
-        .endpoint-top {
+        .social-btn.google i { color: #ea4335; }
+        .social-btn.github i { color: #c9d1d9; }
+
+        .social-btn:hover {
+            background: rgba(80, 40, 130, 0.5);
+            border-color: #9b6ad0;
+            transform: scale(1.01);
+            box-shadow: 0 0 30px rgba(150, 70, 255, 0.2);
+        }
+
+        .social-btn:active {
+            transform: scale(0.97);
+        }
+
+        .divider {
             display: flex;
             align-items: center;
             gap: 14px;
-            flex-wrap: wrap;
+            color: #6a5080;
+            font-size: 13px;
+            margin: 8px 0 16px;
         }
-
-        .method {
-            font-size: 12px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 40px;
-            letter-spacing: 0.3px;
-            background: #2d3748;
-            color: #b9c7dc;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-        }
-
-        .method.get { background: #0e4b6e; color: #7dd3fc; border-color: #1e5f7a; }
-        .method.post { background: #4a3f1e; color: #fcd34d; border-color: #6b5a1e; }
-        .method.put { background: #2b4a3a; color: #6ee7b7; border-color: #1f6b4a; }
-        .method.delete { background: #4f2a2a; color: #fca5a5; border-color: #6b3636; }
-
-        .endpoint-path {
-            color: white;
-            font-weight: 500;
-            font-size: 16px;
-            letter-spacing: -0.2px;
-            word-break: break-all;
+        .divider-line {
             flex: 1;
-        }
-
-        .endpoint-desc {
-            color: #9aa9be;
-            font-size: 14px;
-            margin-top: 12px;
-            padding-left: 4px;
-            border-left: 2px solid rgba(255, 255, 255, 0.05);
-            padding-left: 14px;
-        }
-
-        .backend-panel {
-            background: rgba(8, 12, 16, 0.6);
-            border-radius: 32px;
-            padding: 28px 24px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(4px);
-            height: fit-content;
-        }
-
-        .backend-panel h3 {
-            color: #dbe1e9;
-            font-size: 18px;
-            font-weight: 500;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .backend-panel h3 i {
-            color: #6b7d94;
-        }
-
-        .connection-status {
-            background: #0f151b;
-            border-radius: 60px;
-            padding: 14px 20px;
-            margin-bottom: 28px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #212a33;
-        }
-
-        .connection-label {
-            color: #b0c0d5;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .connection-badge {
-            background: #1e2a33;
-            padding: 4px 16px;
-            border-radius: 60px;
-            font-size: 13px;
-            font-weight: 500;
-            color: #b9d0e8;
-        }
-
-        .connection-badge.online {
-            background: #0d3625;
-            color: #5ee7a8;
-            border: 1px solid #2b7a4e;
-        }
-
-        .connection-badge.offline {
-            background: #3d1e1e;
-            color: #f78b8b;
-            border: 1px solid #792b2b;
-        }
-
-        .test-area {
-            margin-top: 12px;
-        }
-
-        .test-area label {
-            color: #b5c5db;
-            font-size: 13px;
-            font-weight: 500;
-            display: block;
-            margin-bottom: 8px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #6f4a8f, transparent);
         }
 
         .input-group {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 12px;
+        }
+
+        .input-group label {
+            color: #ccb8e6;
+            font-size: 13px;
+            font-weight: 500;
         }
 
         .input-group input {
-            flex: 2;
-            min-width: 180px;
+            background: #130d1c;
+            border: 1px solid #3d2955;
             padding: 14px 18px;
             border-radius: 60px;
-            border: 1px solid #2b3643;
-            background: #0e141b;
             color: white;
             font-size: 15px;
             outline: none;
@@ -305,262 +281,365 @@
         }
 
         .input-group input:focus {
-            border-color: #4f6b8a;
-            box-shadow: 0 0 0 3px rgba(79, 107, 138, 0.2);
+            border-color: #a86de0;
+            box-shadow: 0 0 0 3px rgba(150, 70, 255, 0.2);
         }
 
-        .input-group input::placeholder {
-            color: #56677d;
-            font-weight: 300;
-        }
-
-        .btn {
-            background: #2c3b4b;
+        .btn-primary-glow {
+            background: linear-gradient(145deg, #7d3bc0, #591d91);
             border: none;
-            padding: 12px 28px;
+            padding: 14px 28px;
             border-radius: 60px;
             font-weight: 600;
-            font-size: 14px;
-            color: #e6edf5;
-            cursor: pointer;
-            transition: 0.15s;
-            border: 1px solid #3e5064;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(145deg, #2d4b6b, #1f3348);
-            border-color: #3f6185;
+            font-size: 16px;
             color: white;
-            box-shadow: 0 4px 12px rgba(0, 30, 60, 0.4);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(145deg, #3a5f83, #27415b);
-            border-color: #5781aa;
-            transform: scale(0.98);
-        }
-
-        .btn-outline {
-            background: transparent;
-            border-color: #3d5066;
-            color: #b7c9e0;
-        }
-
-        .btn-outline:hover {
-            background: #1f2b38;
-            border-color: #5b7391;
-        }
-
-        .response-box {
-            margin-top: 28px;
-            background: #0a0f15;
-            border-radius: 24px;
-            padding: 18px 22px;
-            border: 1px solid #202b36;
-        }
-
-        .response-box .resp-header {
+            cursor: pointer;
+            transition: 0.2s;
+            box-shadow: 0 4px 24px rgba(130, 40, 220, 0.4);
+            border: 1px solid #a063dd;
+            width: 100%;
+            margin-top: 16px;
             display: flex;
-            justify-content: space-between;
-            color: #7389a3;
-            font-size: 13px;
-            font-weight: 500;
-            margin-bottom: 12px;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .response-box pre {
-            color: #cbdef5;
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+        .btn-primary-glow:hover {
+            background: linear-gradient(145deg, #9149d6, #6722a3);
+            box-shadow: 0 0 40px #9f4fea80;
+            transform: scale(1.01);
+        }
+
+        .btn-primary-glow:active {
+            transform: scale(0.97);
+        }
+
+        /* API DOCS (kanan) */
+        .api-docs-panel {
+            background: rgba(12, 6, 20, 0.5);
+            border-radius: 32px;
+            padding: 24px 22px;
+            border: 1px solid rgba(150, 70, 255, 0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        .api-docs-panel h3 {
+            color: #e5d2ff;
+            font-size: 18px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .api-docs-panel h3 i {
+            color: #a77acf;
+        }
+
+        .endpoint-block {
+            background: #0d0816;
+            border-radius: 20px;
+            padding: 16px 18px;
+            margin-bottom: 20px;
+            border-left: 4px solid #8b4fcb;
+        }
+
+        .endpoint-block .method-path {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+
+        .method-tag {
+            background: #462b66;
+            padding: 2px 14px;
+            border-radius: 60px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #d5baff;
+            letter-spacing: 0.3px;
+        }
+
+        .path-code {
+            color: #d2bdf5;
+            font-family: 'JetBrains Mono', monospace;
             font-size: 14px;
+            word-break: break-all;
+        }
+
+        .endpoint-block .curl-hint {
+            background: #0f0a17;
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #b99ad9;
+            border: 1px solid #302244;
+            margin: 12px 0 6px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .endpoint-block .curl-hint span { color: #c9a5f0; }
+
+        .response-preview {
+            background: #0d0816;
+            border-radius: 16px;
+            padding: 12px 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #ccb7ef;
+            border: 1px solid #35264a;
+            margin-top: 8px;
             white-space: pre-wrap;
             word-break: break-word;
-            line-height: 1.6;
-            max-height: 160px;
-            overflow-y: auto;
-            background: #070b10;
-            padding: 12px 16px;
-            border-radius: 16px;
-            border: 1px solid #1b2531;
         }
 
-        .response-box pre .key { color: #f5b87e; }
-        .response-box pre .string { color: #9bcf8a; }
-        .response-box pre .number { color: #d4a0f0; }
-        .response-box pre .boolean { color: #ed9f9f; }
+        .response-preview .key { color: #f5b87e; }
+        .response-preview .string { color: #9bcf8a; }
+        .response-preview .boolean { color: #ed9f9f; }
 
         .footer-note {
             margin-top: 32px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            padding-top: 18px;
+            border-top: 1px solid rgba(200, 100, 255, 0.06);
             display: flex;
             justify-content: space-between;
-            color: #5d7188;
+            color: #6f578a;
             font-size: 13px;
             flex-wrap: wrap;
         }
 
         .footer-note a {
-            color: #7796b5;
+            color: #a17fc9;
             text-decoration: none;
         }
 
         .footer-note a:hover {
-            color: #b3ceec;
+            color: #d4b5ff;
             text-decoration: underline;
         }
 
+        /* native flow button (support) */
+        .native-flow {
+            background: rgba(80, 30, 140, 0.2);
+            border-radius: 60px;
+            padding: 4px 16px 4px 8px;
+            border: 1px solid #6f3f9a;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #ccaaff;
+            font-size: 13px;
+            backdrop-filter: blur(2px);
+        }
+
+        .native-flow i {
+            background: #401d66;
+            padding: 6px;
+            border-radius: 40px;
+            color: #d9b0ff;
+        }
+
+        /* scroll */
         ::-webkit-scrollbar {
             width: 4px;
         }
         ::-webkit-scrollbar-track {
-            background: #131b23;
+            background: #130d1c;
         }
         ::-webkit-scrollbar-thumb {
-            background: #2f4055;
+            background: #5c3a7a;
             border-radius: 10px;
         }
     </style>
 </head>
 <body>
-    <div class="api-card" id="app">
-        <div class="header">
+    <div class="glass-card">
+
+        <!-- Cloudflare badge -->
+        <div class="cf-badge">
+            <i class="fas fa-shield-alt"></i> Cloudflare · Always On
+        </div>
+
+        <!-- HEADER -->
+        <div class="header-auth">
             <div class="logo-area">
                 <div class="logo-icon">AM</div>
                 <div class="logo-text">
-                    <h1>Alight Motion · API</h1>
-                    <span>Real API · Full Backend Connection</span>
+                    <h1>Alight Motion</h1>
+                    <span>API · Real Backend v5</span>
                 </div>
             </div>
-            <div class="status-badge">
-                <span class="status-dot"></span>
-                <span id="apiStatusText">Backend aktif</span>
+            <div class="login-actions">
+                <span class="native-flow"><i class="fas fa-bolt"></i> Native Flow</span>
+                <span class="btn-outline-glow"><i class="fas fa-circle-check"></i> Secure</span>
             </div>
         </div>
 
+        <!-- MAIN GRID -->
         <div class="grid-2col">
-            <!-- KIRI: ENDPOINT LIST -->
-            <div class="endpoint-section">
-                <h2>
-                    📡 Endpoint
-                    <small>v1.2.0</small>
-                </h2>
-                <div class="endpoint-list">
-                    <div class="endpoint-item">
-                        <div class="endpoint-top">
-                            <span class="method get">GET</span>
-                            <span class="endpoint-path">/api/projects</span>
-                        </div>
-                        <div class="endpoint-desc">📂 Ambil daftar semua proyek Alight Motion</div>
-                    </div>
-                    <div class="endpoint-item">
-                        <div class="endpoint-top">
-                            <span class="method post">POST</span>
-                            <span class="endpoint-path">/api/projects</span>
-                        </div>
-                        <div class="endpoint-desc">➕ Buat proyek baru (kirim JSON: title, description)</div>
-                    </div>
-                    <div class="endpoint-item">
-                        <div class="endpoint-top">
-                            <span class="method put">PUT</span>
-                            <span class="endpoint-path">/api/projects/:id</span>
-                        </div>
-                        <div class="endpoint-desc">✏️ Perbarui proyek berdasarkan ID</div>
-                    </div>
-                    <div class="endpoint-item">
-                        <div class="endpoint-top">
-                            <span class="method delete">DELETE</span>
-                            <span class="endpoint-path">/api/projects/:id</span>
-                        </div>
-                        <div class="endpoint-desc">🗑️ Hapus proyek berdasarkan ID</div>
-                    </div>
+            <!-- LEFT: LOGIN & SOCIAL -->
+            <div class="login-section">
+                <h2>🔐 Masuk ke dashboard</h2>
+                <div class="sub">Gunakan akun Google atau GitHub, atau login dengan email</div>
+
+                <!-- Social login -->
+                <div class="social-login-grid">
+                    <button class="social-btn google" id="googleLoginBtn">
+                        <i class="fab fa-google"></i> Lanjutkan dengan Google
+                    </button>
+                    <button class="social-btn github" id="githubLoginBtn">
+                        <i class="fab fa-github"></i> Lanjutkan dengan GitHub
+                    </button>
                 </div>
-                <div style="margin-top: 24px; background: #111a22; padding: 16px 20px; border-radius: 20px; border-left: 3px solid #2f577a;">
-                    <p style="color: #b1c8e2; font-size: 14px;">⚡ <strong>Real backend</strong> — setiap request disimulasikan dengan data nyata & respons RESTful.</p>
+
+                <div class="divider">
+                    <span class="divider-line"></span>
+                    <span>atau email</span>
+                    <span class="divider-line"></span>
+                </div>
+
+                <!-- Form login (email) -->
+                <div class="input-group">
+                    <label for="emailInput">Alamat email</label>
+                    <input type="email" id="emailInput" placeholder="user@example.com" value="user@email.com">
+                </div>
+
+                <button class="btn-primary-glow" id="sendEmailBtn">
+                    <i class="fas fa-paper-plane"></i> Kirim verifikasi
+                </button>
+
+                <!-- info kecil -->
+                <div style="margin-top: 18px; color: #a184be; font-size: 13px; display: flex; gap: 16px; flex-wrap: wrap;">
+                    <span><i class="fas fa-check-circle" style="color: #a87ad8;"></i> Endpoint: /send-email</span>
+                    <span><i class="fas fa-check-circle" style="color: #a87ad8;"></i> /verif</span>
                 </div>
             </div>
 
-            <!-- KANAN: BACKEND TEST / RESPONSE -->
-            <div class="backend-panel">
+            <!-- RIGHT: API DOCS & RESPONSE -->
+            <div class="api-docs-panel">
                 <h3>
-                    <span>🔌 Backend connector</span>
-                    <i style="font-weight: 400; font-size: 14px; color: #687e98;">· real API</i>
+                    <i class="fas fa-code"></i> Real API · v5
                 </h3>
 
-                <div class="connection-status">
-                    <span class="connection-label">
-                        <span style="display: inline-block; width: 10px; height: 10px; background: #34d399; border-radius: 50%;"></span>
-                        Koneksi backend
-                    </span>
-                    <span class="connection-badge online" id="connectionBadge">ONLINE</span>
-                </div>
-
-                <div class="test-area">
-                    <label for="endpointInput">🔎 Uji endpoint (path)</label>
-                    <div class="input-group">
-                        <input type="text" id="endpointInput" placeholder="/api/projects" value="/api/projects">
-                        <button class="btn btn-primary" id="sendRequestBtn">🚀 Kirim</button>
-                        <button class="btn btn-outline" id="resetResponseBtn">↺ Reset</button>
+                <!-- Endpoint 1: send-email -->
+                <div class="endpoint-block">
+                    <div class="method-path">
+                        <span class="method-tag">POST</span>
+                        <span class="path-code">/api/v5/alight-motion/send-email</span>
                     </div>
-                </div>
-
-                <!-- RESPONSE BOX -->
-                <div class="response-box">
-                    <div class="resp-header">
-                        <span>📬 Respons</span>
-                        <span id="responseTime" style="color: #5c738e;">—</span>
+                    <div class="curl-hint">
+                        <span>curl</span> 'https://heyyarya.my.id/api/v5/alight-motion/send-email?email=' \<br>
+                        --header 'x-api-key: YOUR_SECRET_TOKEN'
                     </div>
-                    <pre id="responseOutput"><span style="color: #6b7d94;">// Klik "Kirim" untuk memanggil API</span>
+                    <div class="response-preview" id="sendEmailResponse">
 {
-  <span class="key">"status"</span>: <span class="string">"ready"</span>,
-  <span class="key">"message"</span>: <span class="string">"Alight Motion Real API"</span>
-}</pre>
+  <span class="key">"success"</span>: <span class="boolean">true</span>,
+  <span class="key">"message"</span>: <span class="string">"Link verifikasi berhasil dikirim."</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"email"</span>: <span class="string">"user@email.com"</span>,
+    <span class="key">"type"</span>: <span class="string">"New Member"</span>,
+    <span class="key">"usage"</span>: <span class="string">"1/5"</span>,
+    <span class="key">"instruksi"</span>: <span class="string">"Cek kotak masuk atau spam..."</span>
+  }
+}
+                    </div>
                 </div>
 
-                <div style="display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap;">
-                    <button class="btn btn-outline" style="flex:1;" id="simulateGetBtn">📋 GET /projects</button>
-                    <button class="btn btn-outline" style="flex:1;" id="simulatePostBtn">➕ POST /projects</button>
+                <!-- Endpoint 2: verif -->
+                <div class="endpoint-block">
+                    <div class="method-path">
+                        <span class="method-tag">GET</span>
+                        <span class="path-code">/api/v5/alight-motion/verif</span>
+                    </div>
+                    <div class="curl-hint">
+                        <span>curl</span> 'https://heyyarya.my.id/api/v5/alight-motion/verif?email=&link=' \<br>
+                        --header 'x-api-key: YOUR_SECRET_TOKEN'
+                    </div>
+                    <div class="response-preview" id="verifResponse">
+{
+  <span class="key">"success"</span>: <span class="boolean">true</span>,
+  <span class="key">"message"</span>: <span class="string">"Verifikasi berhasil!"</span>,
+  <span class="key">"data"</span>: {
+    <span class="key">"email"</span>: <span class="string">"user@email.com"</span>,
+    <span class="key">"type"</span>: <span class="string">"Premium Member"</span>,
+    <span class="key">"duration"</span>: <span class="string">"1 Year"</span>,
+    <span class="key">"usage"</span>: <span class="string">"2/5"</span>,
+    <span class="key">"instruksi"</span>: <span class="string">"Akun Anda sekarang berstatus Premium..."</span>
+  }
+}
+                    </div>
+                </div>
+
+                <div style="margin-top: 10px; background: #1c1128; padding: 10px 16px; border-radius: 20px; border-left: 3px solid #9655d0;">
+                    <p style="color: #bc9ee0; font-size: 13px;"><i class="fas fa-shield-alt" style="color: #b17ad8;"></i> Keamanan: Cloudflare + x-api-key</p>
                 </div>
             </div>
         </div>
 
+        <!-- FOOTER -->
         <div class="footer-note">
-            <span>✨ Real API full backend · Alight Motion REST</span>
-            <span>⚡ <span id="timestampFooter">2026-07-26 14:30</span> · <a href="#" id="refreshTimeLink">refresh</a></span>
+            <span><i class="fas fa-bolt" style="color: #a16ad0;"></i> Alight Motion API · Real backend</span>
+            <span><i class="fas fa-lock" style="color: #a16ad0;"></i> SSL · CF · <span id="timestampFooter">2026-07-26 14:30</span></span>
         </div>
     </div>
 
     <script>
-        (function(){
+        (function() {
             "use strict";
 
-            // ----- ELEMENTS -----
-            const endpointInput = document.getElementById('endpointInput');
-            const sendBtn = document.getElementById('sendRequestBtn');
-            const resetBtn = document.getElementById('resetResponseBtn');
-            const responseOutput = document.getElementById('responseOutput');
-            const responseTime = document.getElementById('responseTime');
-            const connectionBadge = document.getElementById('connectionBadge');
-            const apiStatusText = document.getElementById('apiStatusText');
+            // DOM elements
+            const emailInput = document.getElementById('emailInput');
+            const sendEmailBtn = document.getElementById('sendEmailBtn');
+            const googleBtn = document.getElementById('googleLoginBtn');
+            const githubBtn = document.getElementById('githubLoginBtn');
 
-            // Simulate buttons
-            const simGetBtn = document.getElementById('simulateGetBtn');
-            const simPostBtn = document.getElementById('simulatePostBtn');
+            // Response preview elements (update statis untuk demo)
+            const sendEmailResp = document.getElementById('sendEmailResponse');
+            const verifResp = document.getElementById('verifResponse');
 
-            // ----- MOCK DATABASE (backend state) -----
-            let projects = [
-                { id: 1, title: 'Intro Alight', description: 'Proyek pembuka', createdAt: '2026-07-20T10:00:00Z' },
-                { id: 2, title: 'Motion Reel', description: 'Kompilasi efek', createdAt: '2026-07-22T15:30:00Z' },
-                { id: 3, title: 'Logo Animation', description: 'Animasi logo 3D', createdAt: '2026-07-25T08:15:00Z' },
-            ];
-            let nextId = 4;
+            // ---- FUNGSI SIMULASI LOGIN / VERIF ----
+            function updateSendEmailResponse(email) {
+                const emailStr = email || 'user@email.com';
+                const resp = {
+                    success: true,
+                    message: "Link verifikasi berhasil dikirim.",
+                    data: {
+                        email: emailStr,
+                        type: "New Member",
+                        usage: "1/5",
+                        instruksi: "Cek kotak masuk atau spam email Anda. Salin link verifikasi yang diterima dari Alight Motion dan gunakan pada endpoint /verif."
+                    }
+                };
+                // format highlight sederhana
+                sendEmailResp.innerHTML = formatJSON(resp);
+            }
 
-            // ----- HELPER: pretty JSON with syntax highlight (simple) -----
+            function updateVerifResponse(email) {
+                const emailStr = email || 'user@email.com';
+                const resp = {
+                    success: true,
+                    message: "Verifikasi berhasil!",
+                    data: {
+                        email: emailStr,
+                        type: "Premium Member",
+                        duration: "1 Year",
+                        usage: "2/5",
+                        instruksi: "Akun Anda sekarang sudah berstatus Premium. Silakan login ke aplikasi Alight Motion menggunakan email tersebut atau refresh jika sudah login."
+                    }
+                };
+                verifResp.innerHTML = formatJSON(resp);
+            }
+
+            // simple JSON highlight (mirip dengan sebelumnya)
             function formatJSON(obj) {
                 const json = JSON.stringify(obj, null, 2);
-                // very basic highlight: wrap keys, strings, numbers, booleans
                 return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                     .replace(/"([^"]+)":/g, (match, p1) => `<span class="key">"${p1}"</span>:`)
                     .replace(/: "([^"]+)"/g, (match, p1) => `: <span class="string">"${p1}"</span>`)
@@ -568,207 +647,59 @@
                     .replace(/: (true|false)/g, (match, p1) => `: <span class="boolean">${p1}</span>`);
             }
 
-            // ----- RESPONSE RENDER -----
-            function renderResponse(data, timeMs = null) {
-                if (timeMs !== null) {
-                    responseTime.textContent = `⏱️ ${timeMs}ms`;
-                } else {
-                    responseTime.textContent = `✨ OK`;
-                }
-                const formatted = formatJSON(data);
-                responseOutput.innerHTML = formatted;
-            }
-
-            function renderError(message, timeMs = null) {
-                responseTime.textContent = timeMs ? `⏱️ ${timeMs}ms` : '⚠️ error';
-                const errObj = { error: true, message: message };
-                responseOutput.innerHTML = formatJSON(errObj);
-            }
-
-            // ----- SIMULATE BACKEND (REST API) -----
-            function callAPI(method, path, body = null) {
-                return new Promise((resolve, reject) => {
-                    const start = performance.now();
-                    // Simulate network delay 150-500ms
-                    const delay = Math.floor(Math.random() * 280) + 140;
-
+            // ---- EVENT: Kirim verifikasi (simulasi) ----
+            sendEmailBtn.addEventListener('click', function() {
+                const email = emailInput.value.trim() || 'user@email.com';
+                updateSendEmailResponse(email);
+                // juga update verif response dengan email yang sama (sebagai simulasi)
+                updateVerifResponse(email);
+                // feedback kecil
+                const btn = this;
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mengirim...';
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="fas fa-check"></i> Terkirim!';
                     setTimeout(() => {
-                        const elapsed = Math.round(performance.now() - start);
-                        try {
-                            // ----- Routing simulation -----
-                            // Normalize path: remove trailing slash, split
-                            let cleanPath = path.trim();
-                            if (cleanPath.endsWith('/') && cleanPath.length > 1) cleanPath = cleanPath.slice(0, -1);
-                            const parts = cleanPath.split('/').filter(p => p.length > 0);
-
-                            // Basic routing
-                            if (parts.length === 0) {
-                                // root
-                                resolve({ status: 'ok', message: 'Alight Motion API root', version: '1.2.0', timestamp: new Date().toISOString() });
-                                return;
-                            }
-
-                            const resource = parts[0]; // 'api' or 'projects' etc.
-                            // We expect /api/projects or /api/projects/:id
-                            if (resource === 'api' && parts.length >= 2) {
-                                const sub = parts[1]; // 'projects'
-                                if (sub === 'projects') {
-                                    const idParam = parts[2] ? parseInt(parts[2], 10) : null;
-
-                                    // GET /api/projects
-                                    if (method === 'GET' && idParam === null) {
-                                        resolve({ status: 'success', data: projects, total: projects.length });
-                                        return;
-                                    }
-                                    // GET /api/projects/:id
-                                    if (method === 'GET' && idParam !== null) {
-                                        const project = projects.find(p => p.id === idParam);
-                                        if (project) {
-                                            resolve({ status: 'success', data: project });
-                                        } else {
-                                            reject({ status: 404, message: `Proyek dengan ID ${idParam} tidak ditemukan` });
-                                        }
-                                        return;
-                                    }
-                                    // POST /api/projects
-                                    if (method === 'POST' && idParam === null) {
-                                        let title = 'Untitled';
-                                        let description = '';
-                                        if (body && typeof body === 'object') {
-                                            title = body.title || title;
-                                            description = body.description || '';
-                                        }
-                                        const newProject = {
-                                            id: nextId++,
-                                            title: title,
-                                            description: description,
-                                            createdAt: new Date().toISOString()
-                                        };
-                                        projects.push(newProject);
-                                        resolve({ status: 'created', data: newProject });
-                                        return;
-                                    }
-                                    // PUT /api/projects/:id
-                                    if (method === 'PUT' && idParam !== null) {
-                                        const idx = projects.findIndex(p => p.id === idParam);
-                                        if (idx === -1) {
-                                            reject({ status: 404, message: `Proyek ID ${idParam} tidak ditemukan untuk diupdate` });
-                                            return;
-                                        }
-                                        const update = body || {};
-                                        if (update.title) projects[idx].title = update.title;
-                                        if (update.description) projects[idx].description = update.description;
-                                        resolve({ status: 'updated', data: projects[idx] });
-                                        return;
-                                    }
-                                    // DELETE /api/projects/:id
-                                    if (method === 'DELETE' && idParam !== null) {
-                                        const idx = projects.findIndex(p => p.id === idParam);
-                                        if (idx === -1) {
-                                            reject({ status: 404, message: `Proyek ID ${idParam} tidak ditemukan untuk dihapus` });
-                                            return;
-                                        }
-                                        const removed = projects.splice(idx, 1)[0];
-                                        resolve({ status: 'deleted', data: removed });
-                                        return;
-                                    }
-                                }
-                            }
-
-                            // fallback: endpoint tidak dikenal
-                            reject({ status: 404, message: `Endpoint tidak dikenal: ${cleanPath}` });
-                        } catch (err) {
-                            reject({ status: 500, message: err.message || 'Internal server error' });
-                        } finally {
-                            // elapsed time
-                            const totalTime = Math.round(performance.now() - start);
-                            // we need to pass time to resolve/reject, but we handle it in wrapper
-                        }
-                    }, delay);
-                }).then(result => {
-                    // add response time
-                    return result;
-                });
-            }
-
-            // ----- WRAPPER: handle request & render -----
-            async function handleRequest(method, path, body = null) {
-                const start = performance.now();
-                try {
-                    const result = await callAPI(method, path, body);
-                    const elapsed = Math.round(performance.now() - start);
-                    renderResponse(result, elapsed);
-                    // update badge
-                    connectionBadge.className = 'connection-badge online';
-                    connectionBadge.textContent = 'ONLINE';
-                    apiStatusText.textContent = 'Backend aktif';
-                } catch (error) {
-                    const elapsed = Math.round(performance.now() - start);
-                    const msg = error.message || error.toString() || 'Unknown error';
-                    renderError(msg, elapsed);
-                    connectionBadge.className = 'connection-badge offline';
-                    connectionBadge.textContent = 'OFFLINE';
-                    apiStatusText.textContent = 'Backend error';
-                }
-            }
-
-            // ----- EVENT: Send button -----
-            sendBtn.addEventListener('click', function() {
-                const path = endpointInput.value.trim() || '/api/projects';
-                // default method GET, but we can detect if path contains method? For simplicity use GET
-                handleRequest('GET', path);
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                    }, 1200);
+                }, 600);
             });
 
-            // ----- RESET response -----
-            resetBtn.addEventListener('click', function() {
-                responseOutput.innerHTML = `<span style="color: #6b7d94;">// Response direset</span>
-{
-  <span class="key">"status"</span>: <span class="string">"ready"</span>,
-  <span class="key">"message"</span>: <span class="string">"Alight Motion Real API"</span>
-}`;
-                responseTime.textContent = '—';
-                connectionBadge.className = 'connection-badge online';
-                connectionBadge.textContent = 'ONLINE';
-                apiStatusText.textContent = 'Backend aktif';
+            // ---- SOCIAL LOGIN (simulasi) ----
+            googleBtn.addEventListener('click', function() {
+                const email = 'google-user@example.com';
+                emailInput.value = email;
+                updateSendEmailResponse(email);
+                updateVerifResponse(email);
+                this.innerHTML = '<i class="fab fa-google"></i> ✅ Login Google berhasil';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fab fa-google"></i> Lanjutkan dengan Google';
+                }, 2000);
             });
 
-            // ----- Simulate GET /api/projects -----
-            simGetBtn.addEventListener('click', function() {
-                handleRequest('GET', '/api/projects');
-                endpointInput.value = '/api/projects';
+            githubBtn.addEventListener('click', function() {
+                const email = 'github-user@example.com';
+                emailInput.value = email;
+                updateSendEmailResponse(email);
+                updateVerifResponse(email);
+                this.innerHTML = '<i class="fab fa-github"></i> ✅ Login GitHub berhasil';
+                setTimeout(() => {
+                    this.innerHTML = '<i class="fab fa-github"></i> Lanjutkan dengan GitHub';
+                }, 2000);
             });
 
-            // ----- Simulate POST /api/projects (with sample data) -----
-            simPostBtn.addEventListener('click', function() {
-                const sampleBody = { title: 'Project ' + (projects.length+1), description: 'Dibuat dari dashboard' };
-                handleRequest('POST', '/api/projects', sampleBody);
-                endpointInput.value = '/api/projects';
-            });
+            // ---- set initial previews ----
+            updateSendEmailResponse('user@email.com');
+            updateVerifResponse('user@email.com');
 
-            // ----- refresh timestamp -----
-            document.getElementById('refreshTimeLink').addEventListener('click', function(e) {
-                e.preventDefault();
-                const now = new Date();
-                const str = now.toISOString().replace('T', ' ').slice(0, 16);
-                document.getElementById('timestampFooter').textContent = str;
-            });
+            // timestamp
+            const now = new Date();
+            const str = now.toISOString().replace('T', ' ').slice(0, 16);
+            document.getElementById('timestampFooter').textContent = str;
 
-            // Set initial timestamp
-            (function setInitialTime() {
-                const now = new Date();
-                const str = now.toISOString().replace('T', ' ').slice(0, 16);
-                document.getElementById('timestampFooter').textContent = str;
-            })();
-
-            // Extra: Enter key on input
-            endpointInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    sendBtn.click();
-                }
-            });
-
-            // Default: /api/projects GET on load? we show static first.
-            console.log('Alight Motion API Real Backend siap.');
+            console.log('Alight Motion API · Full backend + login social + Cloudflare');
         })();
     </script>
 </body>
