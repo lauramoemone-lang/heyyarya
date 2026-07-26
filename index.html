@@ -3,763 +3,1003 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alight Motion · Minecraft API</title>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title>Alight Motion Premium API - Xyrooo</title>
     <style>
+        /* ==================== RESET & BASE ==================== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Courier New', 'VT323', 'Minecraft', 'Inter', monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
 
         body {
-            background: #2d2d2d;
+            background: #0a0e17;
+            color: #e8edf5;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-            image-rendering: pixelated;
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.2) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.2) 1px, transparent 1px);
-            background-size: 30px 30px;
+            padding: 2rem;
         }
 
-        /* Efek blocky Minecraft */
-        .glass-card {
-            max-width: 1100px;
-            width: 100%;
-            background: #3d3d3d;
-            border: 4px solid #6b6b6b;
-            border-radius: 0px;
-            padding: 30px 35px;
-            position: relative;
-            z-index: 2;
-            box-shadow: 
-                inset 0 0 0 2px #4a4a4a,
-                0 10px 30px rgba(0,0,0,0.8),
-                0 0 60px rgba(80, 40, 160, 0.3);
-            image-rendering: pixelated;
-            transform: perspective(800px) rotateX(2deg);
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: perspective(800px) rotateX(2deg) translateY(0px); }
-            50% { transform: perspective(800px) rotateX(2deg) translateY(-8px); }
-        }
-
-        .glass-card::before {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            right: 8px;
-            bottom: 8px;
-            border: 2px solid #5a5a5a;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        /* CF badge Minecraft style */
-        .cf-badge {
-            position: absolute;
-            top: -18px;
-            right: 30px;
-            background: #3a3a3a;
-            padding: 6px 18px;
-            font-size: 14px;
-            font-weight: bold;
-            color: #aaffaa;
-            border: 3px solid #6b6b6b;
-            box-shadow: inset 0 0 0 2px #2a2a2a;
-            letter-spacing: 1px;
-            image-rendering: pixelated;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'Courier New', monospace;
-            animation: blink-border 2s step-end infinite;
-        }
-
-        @keyframes blink-border {
-            0%, 100% { border-color: #6b6b6b; }
-            50% { border-color: #aaffaa; }
-        }
-
-        .cf-badge i {
-            color: #88ff88;
-            font-size: 16px;
-        }
-
-        .header-auth {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 4px solid #5a5a5a;
-            padding-bottom: 18px;
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .logo-icon {
-            background: #4a4a4a;
-            border: 3px solid #6b6b6b;
-            box-shadow: inset 0 0 0 2px #2a2a2a;
-            width: 54px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 28px;
-            color: #aaffaa;
-            font-family: 'Courier New', monospace;
-            image-rendering: pixelated;
-            transform: rotate(-2deg);
-            animation: minecraft-pulse 3s step-end infinite;
-        }
-
-        @keyframes minecraft-pulse {
-            0%, 100% { background: #4a4a4a; }
-            50% { background: #5a5a5a; }
-        }
-
-        .logo-text h1 {
-            color: #aaffaa;
-            font-size: 28px;
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-            text-shadow: 3px 3px 0 #2a2a2a;
-            letter-spacing: 1px;
-        }
-
-        .logo-text span {
-            color: #88bb88;
-            font-size: 14px;
-            font-weight: bold;
-            display: block;
-            margin-top: 2px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .login-actions {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .btn-outline-glow {
-            background: #3a3a3a;
-            border: 3px solid #6b6b6b;
-            padding: 8px 20px;
-            color: #aaffaa;
-            font-weight: bold;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            box-shadow: inset 0 0 0 2px #2a2a2a;
-            cursor: default;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-outline-glow i {
-            color: #88ff88;
-        }
-
-        .grid-2col {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 36px;
-            margin-top: 10px;
-        }
-
-        @media (max-width: 820px) {
-            .grid-2col {
-                grid-template-columns: 1fr;
-                gap: 28px;
-            }
-            .glass-card {
-                padding: 20px 16px;
-            }
-            .cf-badge {
-                right: 16px;
-                top: -14px;
-                font-size: 11px;
-                padding: 4px 12px;
-            }
-        }
-
-        /* LOGIN SECTION */
-        .login-section h2 {
-            color: #aaffaa;
-            font-size: 24px;
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 8px;
-            text-shadow: 3px 3px 0 #2a2a2a;
-        }
-
-        .login-section .sub {
-            color: #88bb88;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 28px;
-        }
-
-        .social-login-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .social-btn {
-            background: #3a3a3a;
-            border: 3px solid #6b6b6b;
-            padding: 16px 20px;
-            color: #aaffaa;
-            font-weight: bold;
-            font-size: 16px;
-            font-family: 'Courier New', monospace;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            transition: all 0.1s step-end;
-            cursor: pointer;
-            box-shadow: inset 0 0 0 2px #2a2a2a;
-            width: 100%;
-            text-decoration: none;
-            image-rendering: pixelated;
-        }
-
-        .social-btn i {
-            font-size: 24px;
-            width: 30px;
-            text-align: center;
-        }
-
-        .social-btn.google i { color: #ff6b6b; }
-        .social-btn.github i { color: #dddddd; }
-
-        .social-btn:hover {
-            background: #4a4a4a;
-            border-color: #88ff88;
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(80, 255, 80, 0.2);
-        }
-
-        .social-btn:active {
-            transform: scale(0.97);
-        }
-
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            color: #6b8b6b;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            margin: 8px 0 16px;
-        }
-        .divider-line {
-            flex: 1;
-            height: 3px;
-            background: #5a5a5a;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-top: 12px;
-        }
-
-        .input-group label {
-            color: #88bb88;
-            font-size: 14px;
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-        }
-
-        .input-group input {
-            background: #2a2a2a;
-            border: 3px solid #5a5a5a;
-            padding: 14px 18px;
-            color: #aaffaa;
-            font-size: 16px;
-            font-family: 'Courier New', monospace;
-            outline: none;
-            transition: 0.1s step-end;
-            box-shadow: inset 0 0 0 2px #1a1a1a;
-        }
-
-        .input-group input:focus {
-            border-color: #88ff88;
-            box-shadow: inset 0 0 0 2px #1a1a1a, 0 0 20px rgba(80, 255, 80, 0.2);
-        }
-
-        .btn-primary-glow {
-            background: #3a6b3a;
-            border: 3px solid #6b9b6b;
-            padding: 14px 28px;
-            font-weight: bold;
-            font-size: 16px;
-            font-family: 'Courier New', monospace;
-            color: #aaffaa;
-            cursor: pointer;
-            transition: 0.1s step-end;
-            box-shadow: inset 0 0 0 2px #2a4a2a;
-            width: 100%;
-            margin-top: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .btn-primary-glow:hover {
-            background: #4a8b4a;
-            border-color: #88ff88;
-            box-shadow: 0 0 40px rgba(80, 255, 80, 0.3);
-            transform: scale(1.02);
-        }
-
-        .btn-primary-glow:active {
-            transform: scale(0.97);
-        }
-
-        /* API DOCS */
-        .api-docs-panel {
-            background: #2a2a2a;
-            border: 4px solid #5a5a5a;
-            padding: 24px 22px;
-            box-shadow: inset 0 0 0 2px #1a1a1a;
-        }
-
-        .api-docs-panel h3 {
-            color: #aaffaa;
-            font-size: 20px;
-            font-weight: bold;
-            font-family: 'Courier New', monospace;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-shadow: 2px 2px 0 #2a2a2a;
-        }
-
-        .api-docs-panel h3 i {
-            color: #88ff88;
-        }
-
-        .endpoint-block {
-            background: #222222;
-            border: 3px solid #4a4a4a;
-            padding: 16px 18px;
-            margin-bottom: 20px;
-            border-left: 8px solid #6b9b6b;
-            box-shadow: inset 0 0 0 2px #1a1a1a;
-        }
-
-        .endpoint-block .method-path {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 6px;
-        }
-
-        .method-tag {
-            background: #3a3a3a;
-            border: 2px solid #6b6b6b;
-            padding: 2px 14px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #aaffaa;
-            font-family: 'Courier New', monospace;
-        }
-
-        .path-code {
-            color: #88bb88;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            word-break: break-all;
-        }
-
-        .endpoint-block .curl-hint {
-            background: #1a1a1a;
-            padding: 12px 14px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            color: #88bb88;
-            border: 2px solid #3a3a3a;
-            margin: 12px 0 6px;
-            overflow-x: auto;
-            white-space: pre-wrap;
-            word-break: break-all;
-        }
-
-        .endpoint-block .curl-hint span { color: #aaffaa; }
-
-        .response-preview {
-            background: #1a1a1a;
-            padding: 12px 16px;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            color: #88bb88;
-            border: 2px solid #3a3a3a;
-            margin-top: 8px;
-            white-space: pre-wrap;
-            word-break: break-word;
-        }
-
-        .response-preview .key { color: #ffaa55; }
-        .response-preview .string { color: #88ff88; }
-        .response-preview .boolean { color: #ff8888; }
-        .response-preview .number { color: #88ddff; }
-
-        .footer-note {
-            margin-top: 32px;
-            padding-top: 18px;
-            border-top: 4px solid #4a4a4a;
-            display: flex;
-            justify-content: space-between;
-            color: #6b8b6b;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            flex-wrap: wrap;
-        }
-
-        .footer-note a {
-            color: #88bb88;
-            text-decoration: none;
-        }
-
-        .footer-note a:hover {
-            color: #aaffaa;
-            text-decoration: underline;
-        }
-
-        .native-flow {
-            background: #3a3a3a;
-            border: 3px solid #6b6b6b;
-            padding: 4px 16px 4px 8px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: #aaffaa;
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            box-shadow: inset 0 0 0 2px #2a2a2a;
-        }
-
-        .native-flow i {
-            background: #2a2a2a;
-            padding: 6px;
-            color: #88ff88;
-        }
-
-        .toast-message {
-            position: fixed;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #2a2a2a;
-            color: #aaffaa;
-            padding: 12px 28px;
-            border: 4px solid #6b6b6b;
-            box-shadow: inset 0 0 0 2px #1a1a1a;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            z-index: 999;
-            display: none;
-            align-items: center;
-            gap: 12px;
-            image-rendering: pixelated;
-        }
-
-        .toast-message i {
-            color: #88ff88;
-        }
-
+        /* ==================== SCROLLBAR ==================== */
         ::-webkit-scrollbar {
             width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #2a2a2a;
+            background: #141c2b;
+            border-radius: 10px;
         }
         ::-webkit-scrollbar-thumb {
-            background: #5a5a5a;
-            border: 2px solid #4a4a4a;
+            background: #3b82f6;
+            border-radius: 10px;
         }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2563eb;
+        }
+
+        /* ==================== CONTAINER ==================== */
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        /* ==================== HEADER ==================== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #1e2a3a;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #d4e0ff, #6b8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo span {
+            font-weight: 300;
+            -webkit-text-fill-color: #7f8fa4;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-online {
+            background: rgba(34, 197, 94, 0.15);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+
+        .api-key-display {
+            background: #141c2b;
+            padding: 0.3rem 1rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            color: #7f8fa4;
+            font-family: 'Courier New', monospace;
+            border: 1px solid #1e2a3a;
+        }
+
+        /* ==================== STATS ROW ==================== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            background: #141c2b;
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #1e2a3a;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+
+        .stat-box .label {
+            color: #7f8fa4;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4e0ff;
+            margin-top: 0.3rem;
+        }
+
+        .stat-box .value.green { color: #22c55e; }
+        .stat-box .value.blue { color: #3b82f6; }
+        .stat-box .value.orange { color: #f59e0b; }
+        .stat-box .value.purple { color: #8b5cf6; }
+
+        /* ==================== ENDPOINTS GRID ==================== */
+        .section-title {
+            font-size: 1.5rem;
+            color: #d4e0ff;
+            margin: 2rem 0 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .section-title .count {
+            font-size: 0.8rem;
+            color: #7f8fa4;
+            background: #141c2b;
+            padding: 0.2rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid #1e2a3a;
+        }
+
+        .endpoints-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .endpoint-card {
+            background: #141c2b;
+            border-radius: 16px;
+            border: 1px solid #1e2a3a;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .endpoint-card:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.1);
+        }
+
+        .endpoint-card .card-header {
+            padding: 1.2rem 1.5rem;
+            background: #0f1729;
+            border-bottom: 1px solid #1e2a3a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .endpoint-card .card-header .method {
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .method-get { background: #22c55e; color: #fff; }
+        .method-post { background: #3b82f6; color: #fff; }
+
+        .endpoint-card .card-header .badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.6rem;
+            border-radius: 12px;
+            background: #1e2a3a;
+            color: #7f8fa4;
+        }
+
+        .endpoint-card .card-body {
+            padding: 1.2rem 1.5rem;
+        }
+
+        .endpoint-card .card-body .name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #d4e0ff;
+            margin-bottom: 0.3rem;
+        }
+
+        .endpoint-card .card-body .desc {
+            color: #7f8fa4;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .endpoint-card .card-body .url {
+            background: #0a0e17;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            color: #a0b8ff;
+            word-break: break-all;
+            margin-bottom: 0.8rem;
+            border: 1px solid #1a2438;
+        }
+
+        .endpoint-card .card-body .example {
+            background: #0a0e17;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-family: 'Courier New', monospace;
+            color: #b0c0d4;
+            white-space: pre-wrap;
+            border: 1px solid #1a2438;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .endpoint-card .card-body .example .key { color: #f59e0b; }
+        .endpoint-card .card-body .example .string { color: #22c55e; }
+        .endpoint-card .card-body .example .boolean { color: #3b82f6; }
+        .endpoint-card .card-body .example .number { color: #8b5cf6; }
+
+        .endpoint-card .card-footer {
+            padding: 0.8rem 1.5rem;
+            background: #0f1729;
+            border-top: 1px solid #1e2a3a;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-test {
+            padding: 0.4rem 1.2rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #fff;
+        }
+
+        .btn-test:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-test.blue { background: #3b82f6; }
+        .btn-test.green { background: #22c55e; }
+        .btn-test.orange { background: #f59e0b; }
+        .btn-test.purple { background: #8b5cf6; }
+        .btn-test.red { background: #ef4444; }
+
+        .btn-test:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ==================== BULK PROCESS ==================== */
+        .bulk-section {
+            background: #141c2b;
+            border-radius: 16px;
+            border: 1px solid #1e2a3a;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .bulk-section .bulk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .bulk-section .bulk-header h3 {
+            color: #d4e0ff;
+            font-size: 1.2rem;
+        }
+
+        .bulk-section .bulk-header .status-text {
+            color: #7f8fa4;
+            font-size: 0.85rem;
+        }
+
+        .bulk-input-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .bulk-input-group input {
+            background: #0a0e17;
+            border: 1px solid #1e2a3a;
+            color: #e8edf5;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .bulk-input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .bulk-input-group select {
+            background: #0a0e17;
+            border: 1px solid #1e2a3a;
+            color: #e8edf5;
+            padding: 0.6rem 1rem;
+            border-radius: 8px;
+            min-width: 120px;
+        }
+
+        .bulk-input-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        /* ==================== LOG CONSOLE ==================== */
+        .log-console {
+            background: #0a0e17;
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8rem;
+            border: 1px solid #1a2438;
+            margin-top: 1rem;
+        }
+
+        .log-console .log-line {
+            padding: 0.2rem 0;
+            border-bottom: 1px solid rgba(30, 42, 58, 0.3);
+            display: flex;
+            gap: 0.8rem;
+        }
+
+        .log-console .log-line .time {
+            color: #4a5a6e;
+            min-width: 80px;
+        }
+
+        .log-console .log-line .msg {
+            color: #b0c0d4;
+        }
+
+        .log-console .log-line .msg.success { color: #22c55e; }
+        .log-console .log-line .msg.error { color: #ef4444; }
+        .log-console .log-line .msg.info { color: #3b82f6; }
+        .log-console .log-line .msg.warning { color: #f59e0b; }
+
+        .log-console .log-line .email-tag {
+            background: #1e2a3a;
+            padding: 0.1rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            color: #a0b8ff;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: #1e2a3a;
+            border-radius: 2px;
+            margin: 0.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #22c55e);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        /* ==================== TOAST ==================== */
+        .toast-container {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .toast {
+            padding: 0.8rem 1.2rem;
+            border-radius: 10px;
+            background: #141c2b;
+            border: 1px solid #1e2a3a;
+            color: #e8edf5;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transform: translateX(120%);
+            opacity: 0;
+            transition: all 0.5s ease;
+            min-width: 280px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .toast.success { border-left: 4px solid #22c55e; }
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.info { border-left: 4px solid #3b82f6; }
+        .toast.warning { border-left: 4px solid #f59e0b; }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .endpoints-grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; }
+            .header-right { width: 100%; flex-wrap: wrap; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .bulk-input-group { flex-direction: column; }
+            .bulk-input-group input { width: 100%; }
+            .toast-container { right: 1rem; left: 1rem; }
+            .toast { min-width: auto; }
+        }
+
+        @media (max-width: 480px) {
+            .stats-row { grid-template-columns: 1fr; }
+            .logo { font-size: 1.2rem; }
+        }
+
+        /* ==================== ANIMATION ==================== */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .endpoint-card {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .endpoint-card:nth-child(2) { animation-delay: 0.1s; }
+        .endpoint-card:nth-child(3) { animation-delay: 0.2s; }
     </style>
 </head>
 <body>
-    <!-- Toast -->
-    <div id="toast" class="toast-message">
-        <i class="fas fa-cube"></i>
-        <span id="toastText">Login berhasil!</span>
+
+    <!-- ==================== TOAST CONTAINER ==================== -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ==================== MAIN CONTAINER ==================== -->
+    <div class="container">
+
+        <!-- ==================== HEADER ==================== -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">Xyrooo<span>API</span></div>
+            </div>
+            <div class="header-right">
+                <span class="status-badge status-online">
+                    <span class="status-dot"></span>
+                    API Online
+                </span>
+                <span class="api-key-display">🔑 API_KEY: xyrooo_v5_2026</span>
+                <span style="color:#7f8fa4;font-size:0.8rem;">v5.0</span>
+            </div>
+        </header>
+
+        <!-- ==================== STATS ==================== -->
+        <div class="stats-row">
+            <div class="stat-box">
+                <div class="label">📊 Total Endpoints</div>
+                <div class="value blue">3</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">📧 Emails Sent</div>
+                <div class="value green" id="totalSent">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">✅ Verified Premium</div>
+                <div class="value orange" id="totalVerified">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="label">👑 Active Premium</div>
+                <div class="value purple" id="totalActive">0</div>
+            </div>
+        </div>
+
+        <!-- ==================== ENDPOINTS ==================== -->
+        <div class="section-title">
+            📡 API Endpoints
+            <span class="count">3 endpoints</span>
+        </div>
+
+        <div class="endpoints-grid">
+            <!-- ===== ENDPOINT 1: SEND ===== -->
+            <div class="endpoint-card">
+                <div class="card-header">
+                    <span class="method method-post">POST</span>
+                    <span class="badge">⚡ Real-time</span>
+                </div>
+                <div class="card-body">
+                    <div class="name">📩 Send Verification</div>
+                    <div class="desc">Kirim verification link ke email tujuan untuk aktivasi premium.</div>
+                    <div class="url">/api/v5/alight-motion/send?email=user@domain.com</div>
+                    <div class="example">{
+    <span class="key">"success"</span>: <span class="boolean">true</span>,
+    <span class="key">"message"</span>: <span class="string">"✅ Link verifikasi berhasil dikirim"</span>,
+    <span class="key">"data"</span>: {
+        <span class="key">"email"</span>: <span class="string">"user@domain.com"</span>,
+        <span class="key">"type"</span>: <span class="string">"New Member"</span>,
+        <span class="key">"usage"</span>: <span class="string">"1/5"</span>,
+        <span class="key">"token"</span>: <span class="string">"abc123xyz"</span>
+    }
+}</div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-test blue" onclick="testSend()">🚀 Test Send</button>
+                    <button class="btn-test green" onclick="testSendBulk()">📦 Bulk (5)</button>
+                </div>
+            </div>
+
+            <!-- ===== ENDPOINT 2: VERIFY ===== -->
+            <div class="endpoint-card">
+                <div class="card-header">
+                    <span class="method method-post">POST</span>
+                    <span class="badge">🔐 Secure</span>
+                </div>
+                <div class="card-body">
+                    <div class="name">✅ Verify Premium</div>
+                    <div class="desc">Verifikasi link yang diterima dari email untuk aktivasi premium.</div>
+                    <div class="url">/api/v5/alight-motion/verify?email=user@domain.com&token=abc123</div>
+                    <div class="example">{
+    <span class="key">"success"</span>: <span class="boolean">true</span>,
+    <span class="key">"message"</span>: <span class="string">"✅ Verifikasi berhasil!"</span>,
+    <span class="key">"data"</span>: {
+        <span class="key">"email"</span>: <span class="string">"user@domain.com"</span>,
+        <span class="key">"type"</span>: <span class="string">"Premium Member"</span>,
+        <span class="key">"duration"</span>: <span class="string">"1 Year"</span>
+    }
+}</div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-test orange" onclick="testVerify()">🔑 Test Verify</button>
+                </div>
+            </div>
+
+            <!-- ===== ENDPOINT 3: BULK ===== -->
+            <div class="endpoint-card">
+                <div class="card-header">
+                    <span class="method method-post">POST</span>
+                    <span class="badge">⚡ Streaming</span>
+                </div>
+                <div class="card-body">
+                    <div class="name">📦 Bulk Premium</div>
+                    <div class="desc">Generate beberapa email premium sekaligus dengan streaming real-time.</div>
+                    <div class="url">/api/v5/alight-motion/bulk?count=10&domain=gmail.com</div>
+                    <div class="example">{
+    <span class="key">"success"</span>: <span class="boolean">true</span>,
+    <span class="key">"message"</span>: <span class="string">"✅ Bulk generation completed"</span>,
+    <span class="key">"data"</span>: {
+        <span class="key">"total"</span>: <span class="number">10</span>,
+        <span class="key">"success"</span>: <span class="number">10</span>,
+        <span class="key">"failed"</span>: <span class="number">0</span>
+    }
+}</div>
+                </div>
+                <div class="card-footer">
+                    <button class="btn-test purple" onclick="startBulk()">⚡ Start Bulk</button>
+                    <button class="btn-test red" onclick="stopBulk()">⏹ Stop</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== BULK SECTION ==================== -->
+        <div class="bulk-section">
+            <div class="bulk-header">
+                <h3>📦 Bulk Premium Generator <span style="font-size:0.8rem;color:#7f8fa4;font-weight:400;">Real-time Streaming</span></h3>
+                <span class="status-text" id="bulkStatus">⏸ Idle</span>
+            </div>
+
+            <div class="bulk-input-group">
+                <input type="number" id="bulkCount" placeholder="Jumlah email" value="10" min="1" max="100">
+                <select id="bulkDomain">
+                    <option value="gmail.com">@gmail.com</option>
+                    <option value="yahoo.com">@yahoo.com</option>
+                    <option value="outlook.com">@outlook.com</option>
+                    <option value="protonmail.com">@protonmail.com</option>
+                    <option value="custom">Custom</option>
+                </select>
+                <input type="text" id="bulkCustomDomain" placeholder="Custom domain" style="display:none;flex:1;">
+                <button class="btn-test green" onclick="startBulk()">▶ Start Bulk</button>
+                <button class="btn-test red" onclick="stopBulk()">⏹ Stop</button>
+                <button class="btn-test blue" onclick="clearLogs()">🗑 Clear Logs</button>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="bulkProgress"></div>
+            </div>
+
+            <div class="log-console" id="logConsole">
+                <div class="log-line">
+                    <span class="time">[System]</span>
+                    <span class="msg info">🚀 Ready for bulk generation. Click "Start Bulk" to begin.</span>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div class="glass-card">
-        <!-- Cloudflare badge -->
-        <div class="cf-badge">
-            <i class="fas fa-shield-alt"></i> Cloudflare · Always On
-        </div>
-
-        <!-- HEADER -->
-        <div class="header-auth">
-            <div class="logo-area">
-                <div class="logo-icon">⛏️</div>
-                <div class="logo-text">
-                    <h1>Alight Motion</h1>
-                    <span>⚡ API · Real Backend v5</span>
-                </div>
-            </div>
-            <div class="login-actions">
-                <span class="native-flow"><i class="fas fa-cube"></i> Native Flow</span>
-                <span class="btn-outline-glow"><i class="fas fa-check"></i> Secure</span>
-            </div>
-        </div>
-
-        <!-- MAIN GRID -->
-        <div class="grid-2col">
-            <!-- LEFT: LOGIN -->
-            <div class="login-section">
-                <h2>🔐 Masuk ke server</h2>
-                <div class="sub">Gunakan akun Google atau GitHub, atau login dengan email</div>
-
-                <div class="social-login-grid">
-                    <a href="#" class="social-btn google" id="googleLoginBtn">
-                        <i class="fab fa-google"></i> Lanjutkan dengan Google
-                    </a>
-                    <a href="#" class="social-btn github" id="githubLoginBtn">
-                        <i class="fab fa-github"></i> Lanjutkan dengan GitHub
-                    </a>
-                </div>
-
-                <div class="divider">
-                    <span class="divider-line"></span>
-                    <span>atau email</span>
-                    <span class="divider-line"></span>
-                </div>
-
-                <div class="input-group">
-                    <label for="emailInput">📧 Alamat email</label>
-                    <input type="email" id="emailInput" placeholder="user@email.com" value="user@email.com">
-                </div>
-
-                <button class="btn-primary-glow" id="sendEmailBtn">
-                    <i class="fas fa-paper-plane"></i> Kirim verifikasi
-                </button>
-
-                <div style="margin-top: 18px; color: #6b8b6b; font-size: 13px; display: flex; gap: 16px; flex-wrap: wrap; font-family: 'Courier New', monospace;">
-                    <span><i class="fas fa-check" style="color: #88ff88;"></i> /send-email</span>
-                    <span><i class="fas fa-check" style="color: #88ff88;"></i> /verif</span>
-                </div>
-            </div>
-
-            <!-- RIGHT: API DOCS -->
-            <div class="api-docs-panel">
-                <h3>
-                    <i class="fas fa-code"></i> Real API · v5
-                </h3>
-
-                <div class="endpoint-block">
-                    <div class="method-path">
-                        <span class="method-tag">POST</span>
-                        <span class="path-code">/api/v5/alight-motion/send-email</span>
-                    </div>
-                    <div class="curl-hint">
-                        <span>curl</span> 'https://heyyarya.my.id/api/v5/alight-motion/send-email?email=' \<br>
-                        --header 'x-api-key: YOUR_SECRET_TOKEN'
-                    </div>
-                    <div class="response-preview" id="sendEmailResponse">
-{
-  <span class="key">"success"</span>: <span class="boolean">true</span>,
-  <span class="key">"message"</span>: <span class="string">"Link verifikasi berhasil dikirim."</span>,
-  <span class="key">"data"</span>: {
-    <span class="key">"email"</span>: <span class="string">"user@email.com"</span>,
-    <span class="key">"type"</span>: <span class="string">"New Member"</span>,
-    <span class="key">"usage"</span>: <span class="string">"1/5"</span>,
-    <span class="key">"instruksi"</span>: <span class="string">"Cek kotak masuk atau spam..."</span>
-  }
-}
-                    </div>
-                </div>
-
-                <div class="endpoint-block">
-                    <div class="method-path">
-                        <span class="method-tag">GET</span>
-                        <span class="path-code">/api/v5/alight-motion/verif</span>
-                    </div>
-                    <div class="curl-hint">
-                        <span>curl</span> 'https://heyyarya.my.id/api/v5/alight-motion/verif?email=&link=' \<br>
-                        --header 'x-api-key: YOUR_SECRET_TOKEN'
-                    </div>
-                    <div class="response-preview" id="verifResponse">
-{
-  <span class="key">"success"</span>: <span class="boolean">true</span>,
-  <span class="key">"message"</span>: <span class="string">"Verifikasi berhasil!"</span>,
-  <span class="key">"data"</span>: {
-    <span class="key">"email"</span>: <span class="string">"user@email.com"</span>,
-    <span class="key">"type"</span>: <span class="string">"Premium Member"</span>,
-    <span class="key">"duration"</span>: <span class="string">"1 Year"</span>,
-    <span class="key">"usage"</span>: <span class="string">"2/5"</span>,
-    <span class="key">"instruksi"</span>: <span class="string">"Akun Anda sekarang berstatus Premium..."</span>
-  }
-}
-                    </div>
-                </div>
-
-                <div style="margin-top: 10px; background: #222222; padding: 10px 16px; border: 3px solid #4a4a4a; border-left: 8px solid #6b9b6b;">
-                    <p style="color: #88bb88; font-size: 13px; font-family: 'Courier New', monospace;"><i class="fas fa-shield-alt" style="color: #88ff88;"></i> Keamanan: Cloudflare + x-api-key</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- FOOTER -->
-        <div class="footer-note">
-            <span><i class="fas fa-cube" style="color: #88ff88;"></i> Alight Motion API · Real backend</span>
-            <span><i class="fas fa-lock" style="color: #88ff88;"></i> SSL · CF · <span id="timestampFooter">2026-07-26 14:30</span></span>
-        </div>
-    </div>
-
+    <!-- ==================== JAVASCRIPT ==================== -->
     <script>
-        (function() {
-            "use strict";
+        // ==================== STATE ====================
+        const state = {
+            emails: [],
+            verified: [],
+            activePremium: [],
+            totalSent: 0,
+            totalVerified: 0,
+            totalActive: 0,
+            isBulkRunning: false,
+            bulkInterval: null,
+            currentToken: null
+        };
 
-            // Konfigurasi
-            const BASE_URL = 'https://heyyarya.my.id';
-            const GOOGLE_AUTH_URL = `${BASE_URL}/auth/google`;
-            const GITHUB_AUTH_URL = `${BASE_URL}/auth/github`;
+        // ==================== UTILITY ====================
+        function generateToken() {
+            return Math.random().toString(36).substring(2, 15) + 
+                   Math.random().toString(36).substring(2, 15);
+        }
 
-            // DOM
-            const emailInput = document.getElementById('emailInput');
-            const sendEmailBtn = document.getElementById('sendEmailBtn');
-            const googleBtn = document.getElementById('googleLoginBtn');
-            const githubBtn = document.getElementById('githubLoginBtn');
-            const sendEmailResp = document.getElementById('sendEmailResponse');
-            const verifResp = document.getElementById('verifResponse');
-            const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toastText');
+        function getTimestamp() {
+            return new Date().toLocaleTimeString('id-ID', { hour12: false });
+        }
 
-            // Toast
-            function showToast(msg, isSuccess = true) {
-                toastText.textContent = msg;
-                toast.style.display = 'flex';
-                toast.style.borderColor = isSuccess ? '#6b9b6b' : '#9b6b6b';
-                clearTimeout(toast._hideTimer);
-                toast._hideTimer = setTimeout(() => {
-                    toast.style.display = 'none';
-                }, 3500);
+        function getEmail(domain = 'gmail.com') {
+            const names = ['john', 'jane', 'alex', 'sarah', 'mike', 'emma', 'david', 'lisa', 'ryan', 'amy',
+                          'chris', 'kelly', 'jason', 'rachel', 'kevin', 'jessica', 'brian', 'amanda', 'daniel', 'melissa'];
+            const random = Math.floor(Math.random() * 1000) + 100;
+            const name = names[Math.floor(Math.random() * names.length)];
+            return `${name}.${random}@${domain}`;
+        }
+
+        function getDomain() {
+            const domainSelect = document.getElementById('bulkDomain');
+            if (domainSelect.value === 'custom') {
+                return document.getElementById('bulkCustomDomain').value || 'gmail.com';
+            }
+            return domainSelect.value;
+        }
+
+        // ==================== TOAST ====================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        // ==================== LOG ====================
+        function addLog(message, type = 'info', email = null) {
+            const console = document.getElementById('logConsole');
+            const line = document.createElement('div');
+            line.className = 'log-line';
+            
+            const time = document.createElement('span');
+            time.className = 'time';
+            time.textContent = `[${getTimestamp()}]`;
+            
+            const msg = document.createElement('span');
+            msg.className = `msg ${type}`;
+            
+            if (email) {
+                msg.innerHTML = `<span class="email-tag">${email}</span> ${message}`;
+            } else {
+                msg.textContent = message;
+            }
+            
+            line.appendChild(time);
+            line.appendChild(msg);
+            console.appendChild(line);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function clearLogs() {
+            const console = document.getElementById('logConsole');
+            console.innerHTML = '';
+            addLog('🗑 Logs cleared', 'info');
+        }
+
+        // ==================== UPDATE STATS ====================
+        function updateStats() {
+            document.getElementById('totalSent').textContent = state.totalSent;
+            document.getElementById('totalVerified').textContent = state.totalVerified;
+            document.getElementById('totalActive').textContent = state.totalActive;
+        }
+
+        // ==================== ENDPOINT 1: SEND ====================
+        function testSend() {
+            const email = prompt('Masukkan email tujuan:', 'user@domain.com');
+            if (!email) return;
+            
+            if (!email.includes('@')) {
+                showToast('❌ Email tidak valid', 'error');
+                return;
             }
 
-            // Social login redirect
-            googleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = GOOGLE_AUTH_URL;
-            });
-
-            githubBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.location.href = GITHUB_AUTH_URL;
-            });
-
-            // Format JSON dengan highlight Minecraft style
-            function formatJSON(obj) {
-                const json = JSON.stringify(obj, null, 2);
-                return json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-                    .replace(/"([^"]+)":/g, (match, p1) => `<span class="key">"${p1}"</span>:`)
-                    .replace(/: "([^"]+)"/g, (match, p1) => `: <span class="string">"${p1}"</span>`)
-                    .replace(/: (\d+)/g, (match, p1) => `: <span class="number">${p1}</span>`)
-                    .replace(/: (true|false)/g, (match, p1) => `: <span class="boolean">${p1}</span>`);
-            }
-
-            function updateSendEmailResponse(email) {
-                const emailStr = email || 'user@email.com';
-                const resp = {
+            const token = generateToken();
+            state.currentToken = token;
+            
+            // Simulasi API call
+            addLog(`📧 Mengirim verifikasi ke ${email}...`, 'info', email);
+            
+            setTimeout(() => {
+                state.emails.push(email);
+                state.totalSent++;
+                updateStats();
+                
+                const response = {
                     success: true,
-                    message: "Link verifikasi berhasil dikirim.",
+                    message: '✅ Link verifikasi berhasil dikirim',
                     data: {
-                        email: emailStr,
-                        type: "New Member",
-                        usage: "1/5",
-                        instruksi: "Cek kotak masuk atau spam email Anda. Salin link verifikasi yang diterima dari Alight Motion dan gunakan pada endpoint /verif."
+                        email: email,
+                        type: 'New Member',
+                        usage: `${state.emails.length}/5`,
+                        token: token
                     }
                 };
-                sendEmailResp.innerHTML = formatJSON(resp);
+                
+                addLog(`✅ Verifikasi berhasil dikirim ke ${email}`, 'success', email);
+                addLog(`🔑 Token: ${token}`, 'warning');
+                showToast(`📧 Email verifikasi dikirim ke ${email}`, 'success');
+                
+                // Simpan token untuk verify
+                state.currentToken = token;
+                state.currentEmail = email;
+            }, 1500);
+        }
+
+        // ==================== ENDPOINT 2: VERIFY ====================
+        function testVerify() {
+            if (!state.currentToken) {
+                showToast('❌ Kirim email terlebih dahulu untuk mendapatkan token', 'error');
+                return;
             }
 
-            function updateVerifResponse(email) {
-                const emailStr = email || 'user@email.com';
-                const resp = {
-                    success: true,
-                    message: "Verifikasi berhasil!",
-                    data: {
-                        email: emailStr,
-                        type: "Premium Member",
-                        duration: "1 Year",
-                        usage: "2/5",
-                        instruksi: "Akun Anda sekarang sudah berstatus Premium. Silakan login ke aplikasi Alight Motion menggunakan email tersebut atau refresh jika sudah login."
-                    }
-                };
-                verifResp.innerHTML = formatJSON(resp);
-            }
+            const tokenInput = prompt('Masukkan token verifikasi:', state.currentToken);
+            if (!tokenInput) return;
 
-            sendEmailBtn.addEventListener('click', function() {
-                const email = emailInput.value.trim() || 'user@email.com';
-                updateSendEmailResponse(email);
-                updateVerifResponse(email);
-                const btn = this;
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Mengirim...';
-                btn.disabled = true;
-                setTimeout(() => {
-                    btn.innerHTML = '<i class="fas fa-check"></i> Terkirim!';
-                    showToast(`✅ Verifikasi dikirim ke ${email}`, true);
-                    setTimeout(() => {
-                        btn.innerHTML = originalText;
-                        btn.disabled = false;
-                    }, 1200);
-                }, 600);
-            });
+            addLog(`🔐 Memverifikasi token: ${tokenInput}...`, 'info');
 
-            // Check redirect param
-            (function checkRedirect() {
-                const params = new URLSearchParams(window.location.search);
-                const status = params.get('login');
-                if (status === 'success') {
-                    showToast('✅ Login berhasil via OAuth! Selamat datang.', true);
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                } else if (status === 'error') {
-                    showToast('❌ Login gagal. Silakan coba lagi.', false);
-                    window.history.replaceState({}, document.title, window.location.pathname);
+            setTimeout(() => {
+                if (tokenInput === state.currentToken) {
+                    state.verified.push(state.currentEmail);
+                    state.totalVerified++;
+                    
+                    // Upgrade to premium
+                    state.activePremium.push(state.currentEmail);
+                    state.totalActive++;
+                    updateStats();
+
+                    const response = {
+                        success: true,
+                        message: '✅ Verifikasi berhasil!',
+                        data: {
+                            email: state.currentEmail,
+                            type: 'Premium Member',
+                            duration: '1 Year',
+                            premiumUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                                .toISOString().split('T')[0]
+                        }
+                    };
+
+                    addLog(`✅ Verifikasi berhasil untuk ${state.currentEmail}`, 'success', state.currentEmail);
+                    addLog(`👑 ${state.currentEmail} sekarang Premium Member`, 'success', state.currentEmail);
+                    showToast(`✅ ${state.currentEmail} berhasil diverifikasi!`, 'success');
+                    
+                    state.currentToken = null;
+                } else {
+                    addLog(`❌ Token tidak valid: ${tokenInput}`, 'error');
+                    showToast('❌ Token tidak valid', 'error');
                 }
-            })();
+            }, 1000);
+        }
 
-            // Timestamp
-            const now = new Date();
-            document.getElementById('timestampFooter').textContent = now.toISOString().replace('T', ' ').slice(0, 16);
+        // ==================== ENDPOINT 3: BULK ====================
+        function testSendBulk() {
+            const count = 5;
+            const domain = getDomain();
+            startBulkGeneration(count, domain);
+        }
 
-            // Init preview
-            updateSendEmailResponse('user@email.com');
-            updateVerifResponse('user@email.com');
+        function startBulk() {
+            if (state.isBulkRunning) {
+                showToast('⚠️ Bulk generation sedang berjalan', 'warning');
+                return;
+            }
 
-            console.log('⛏️ Alight Motion · Minecraft API ready!');
-        })();
+            const count = parseInt(document.getElementById('bulkCount').value) || 10;
+            const domain = getDomain();
+            
+            if (count < 1 || count > 100) {
+                showToast('❌ Jumlah harus antara 1-100', 'error');
+                return;
+            }
+
+            startBulkGeneration(count, domain);
+        }
+
+        function startBulkGeneration(count, domain) {
+            state.isBulkRunning = true;
+            document.getElementById('bulkStatus').textContent = '⏳ Generating...';
+            document.getElementById('bulkStatus').style.color = '#f59e0b';
+            
+            const progress = document.getElementById('bulkProgress');
+            let completed = 0;
+            let failed = 0;
+            const emails = [];
+
+            addLog(`🚀 Memulai bulk generation untuk ${count} email di @${domain}`, 'info');
+
+            state.bulkInterval = setInterval(() => {
+                if (completed >= count) {
+                    stopBulk();
+                    return;
+                }
+
+                const email = getEmail(domain);
+                const token = generateToken();
+                const success = Math.random() > 0.1; // 90% success rate
+
+                if (success) {
+                    emails.push(email);
+                    state.emails.push(email);
+                    state.totalSent++;
+                    
+                    // Auto verify some
+                    if (Math.random() > 0.3) {
+                        state.verified.push(email);
+                        state.totalVerified++;
+                        state.activePremium.push(email);
+                        state.totalActive++;
+                        addLog(`✅ ${email} → Premium Active`, 'success', email);
+                    } else {
+                        addLog(`📧 ${email} → Verification Sent`, 'info', email);
+                    }
+                    
+                    completed++;
+                    updateStats();
+                } else {
+                    failed++;
+                    addLog(`❌ ${email} → Failed`, 'error', email);
+                }
+
+                // Update progress
+                const progressPercent = (completed / count) * 100;
+                progress.style.width = `${progressPercent}%`;
+
+                document.getElementById('bulkStatus').textContent = 
+                    `⏳ ${completed}/${count} (${failed} failed)`;
+
+            }, 800); // Interval 800ms for real-time feel
+
+            // Auto stop after estimated time
+            setTimeout(() => {
+                if (state.isBulkRunning) {
+                    stopBulk();
+                }
+            }, count * 900 + 1000);
+        }
+
+        function stopBulk() {
+            if (state.bulkInterval) {
+                clearInterval(state.bulkInterval);
+                state.bulkInterval = null;
+            }
+            
+            state.isBulkRunning = false;
+            document.getElementById('bulkStatus').textContent = '⏸ Idle';
+            document.getElementById('bulkStatus').style.color = '#7f8fa4';
+            
+            const progress = document.getElementById('bulkProgress');
+            if (progress.style.width !== '100%') {
+                // If not complete, show current progress
+            }
+            
+            addLog('⏹ Bulk generation stopped', 'warning');
+            showToast('⏹ Bulk generation dihentikan', 'warning');
+        }
+
+        // ==================== CUSTOM DOMAIN TOGGLE ====================
+        document.getElementById('bulkDomain').addEventListener('change', function() {
+            const customInput = document.getElementById('bulkCustomDomain');
+            if (this.value === 'custom') {
+                customInput.style.display = 'block';
+                customInput.focus();
+            } else {
+                customInput.style.display = 'none';
+            }
+        });
+
+        // ==================== KEYBOARD SHORTCUTS ====================
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                startBulk();
+            }
+            if (e.key === 'Escape') {
+                stopBulk();
+            }
+        });
+
+        // ==================== INIT ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            addLog('🚀 Xyrooo API v5.0 Ready', 'info');
+            addLog('📡 3 endpoints available: send, verify, bulk', 'info');
+            addLog('💡 Gunakan CTRL+Enter untuk start bulk, ESC untuk stop', 'warning');
+            updateStats();
+            
+            // Simulate initial stats
+            setTimeout(() => {
+                state.totalSent = 42;
+                state.totalVerified = 28;
+                state.totalActive = 25;
+                updateStats();
+            }, 1000);
+        });
+
+        // ==================== EXPOSE TO GLOBAL ====================
+        window.testSend = testSend;
+        window.testVerify = testVerify;
+        window.testSendBulk = testSendBulk;
+        window.startBulk = startBulk;
+        window.stopBulk = stopBulk;
+        window.clearLogs = clearLogs;
     </script>
 </body>
 </html>
